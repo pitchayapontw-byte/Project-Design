@@ -1,0 +1,14 @@
+🎯 เส้นทางแนะนำในการฝึก Quasar
+✅ ลองเปลี่ยนหน้า IndexPage.vue
+
+✅ ทดลองใช้ component ต่างๆ จาก Component Catalog
+
+✅ เพิ่ม Router (สร้างหน้าใหม่)
+
+✅ ลองใช้ Layouts และ Slots
+
+✅ เชื่อม API ด้วย axios
+
+✅ ใช้ Pinia จัดการ state
+
+✅ ลอง build แอป: quasar build
