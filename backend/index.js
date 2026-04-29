@@ -14,6 +14,28 @@ app.get('/books', async (req, res) => {
   res.json(books)
 })
 
+// เพิ่มหนังสือใหม่
+app.post('/books', async (req, res) => {
+  const { title, author, type, genre, price, rating } = req.body
+
+  try {
+    const book = await prisma.book.create({
+      data: {
+        title,
+        author,
+        type,
+        genre,
+        price: Number(price),
+        rating: Number(rating),
+      },
+    })
+
+    res.json(book)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 app.listen(3000, () => {
   console.log('Server running on http://localhost:3000')
 })
