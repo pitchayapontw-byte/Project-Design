@@ -31,19 +31,12 @@
       </thead>
       <!-- ข้อมูลตาราง -->
       <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">
-        <tr>
-          <td class="data">ภาพวาดปริศนา</td>
-          <td class="data">นักเขียนคนหนึ่ง</td>
-          <td class="data">นวนิยาย</td>
-          <td class="data">350</td>
-          <td class="data">5</td>
-        </tr>
-        <tr>
-          <td class="data">หงส์ในโคม</td>
-          <td class="data">นักเขียนคนหนึ่ง</td>
-          <td class="data">นวนิยาย</td>
-          <td class="data">370</td>
-          <td class="data">5</td>
+        <tr v-for="book in books" :key="book.id">
+          <td class="data">{{ book.title }}</td>
+          <td class="data">{{ book.author }}</td>
+          <td class="data">{{ book.genre }}</td>
+          <td class="data">{{ book.price }}</td>
+          <td class="data">{{ book.rating }}</td>
         </tr>
       </tbody>
     </q-markup-table>
@@ -51,7 +44,18 @@
 </template>
 
 <script setup>
-const lorem = 'จำนวนหนังสือที่สะสม: 2 เล่ม'
+import { ref, onMounted } from 'vue'
+
+const books = ref([])
+const lorem = ref('จำนวนหนังสือที่สะสม: 0 เล่ม')
+
+onMounted(async () => {
+  const res = await fetch('http://localhost:3000/books')
+  const data = await res.json()
+
+  books.value = data
+  lorem.value = `จำนวนหนังสือที่สะสม: ${data.length} เล่ม`
+})
 </script>
 
 <style lang="sass" scoped>
