@@ -15,7 +15,7 @@
               <div class="text-h4 text-white">รวมหนังสือที่สะสม</div>
 
               <div class="q-pa-md q-gutter-sm">
-                <q-btn color="aqua" icon-right="add2" label="Add Book" />
+                <q-btn color="aqua" icon-right="add2" label="Add Book" @click="dialog = true" />
               </div>
             </div>
           </th>
@@ -41,6 +41,18 @@
       </tbody>
     </q-markup-table>
   </div>
+  <q-dialog v-model="dialog">
+    <q-card class="q-pa-md">
+      <q-input v-model="form.title" label="Title" />
+      <q-input v-model="form.author" label="Author" />
+      <q-input v-model="form.type" label="Type" />
+      <q-input v-model="form.genre" label="Genre" />
+      <q-input v-model="form.price" label="Price" type="number" />
+      <q-input v-model="form.rating" label="Rating" type="number" />
+
+      <q-btn label="Save" color="green" @click="addBook" />
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup>
@@ -48,6 +60,31 @@ import { ref, onMounted } from 'vue'
 
 const books = ref([])
 const countallbook = ref('จำนวนหนังสือที่สะสม: 0 เล่ม')
+const form = ref({
+  title: '',
+  author: '',
+  type: '',
+  genre: '',
+  price: 0,
+  rating: 0,
+})
+const dialog = ref(false)
+
+const addBook = async () => {
+  await fetch('http://localhost:3000/books', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(form.value),
+  })
+
+  // reload data
+  const res = await fetch('http://localhost:3000/books')
+  books.value = await res.json()
+
+  countallbook.value = `จำนวนหนังสือที่สะสม: ${books.value.length} เล่ม`
+}
 
 onMounted(async () => {
   const res = await fetch('http://localhost:3000/books')
