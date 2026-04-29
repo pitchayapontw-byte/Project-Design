@@ -2,7 +2,7 @@
   <div class="q-pa-md row items-start q-gutter-md">
     <q-card class="my-card">
       <q-card-section>
-        {{ lorem }}
+        {{ countallbook }}
       </q-card-section>
     </q-card>
   </div>
@@ -47,14 +47,14 @@
 import { ref, onMounted } from 'vue'
 
 const books = ref([])
-const lorem = ref('จำนวนหนังสือที่สะสม: 0 เล่ม')
+const countallbook = ref('จำนวนหนังสือที่สะสม: 0 เล่ม')
 
 onMounted(async () => {
   const res = await fetch('http://localhost:3000/books')
   const data = await res.json()
 
   books.value = data
-  lorem.value = `จำนวนหนังสือที่สะสม: ${data.length} เล่ม`
+  countallbook.value = `จำนวนหนังสือที่สะสม: ${data.length} เล่ม`
 })
 </script>
 
