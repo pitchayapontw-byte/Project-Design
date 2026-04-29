@@ -12,65 +12,38 @@
         <tr>
           <th colspan="5">
             <div class="row no-wrap items-center">
-              <div class="text-h4 q-ml-md text-white">Book Store</div>
+              <div class="text-h4 text-white">รวมหนังสือที่สะสม</div>
 
-              <div class="q-pa-md">
-                <q-btn-dropdown color="primary" label="Dropdown Button">
-                  <q-list>
-                    <q-item clickable v-close-popup @click="onItemClick">
-                      <q-item-section>
-                        <q-item-label>Add Book</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-btn-dropdown>
+              <div class="q-pa-md q-gutter-sm">
+                <q-btn color="aqua" icon-right="add2" label="Add Book" />
               </div>
             </div>
           </th>
         </tr>
-        <tr>
-          <th class="text-left">Dessert (100g serving)</th>
-          <th class="text-right">Calories</th>
-          <th class="text-right">Fat (g)</th>
-          <th class="text-right">Carbs (g)</th>
-          <th class="text-right">Protein (g)</th>
+        <!-- หัวตาราง -->
+        <tr class="dataheader">
+          <th class="dataheader" style="font-size: large">ขื่อเรื่อง</th>
+          <th class="dataheader" style="font-size: large">ผู้แต่ง</th>
+          <th class="dataheader" style="font-size: large">ประเภท</th>
+          <th class="dataheader" style="font-size: large">ราคา</th>
+          <th class="dataheader">คะแนน</th>
         </tr>
       </thead>
+      <!-- ข้อมูลตาราง -->
       <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">
         <tr>
-          <td class="text-left">Frozen Yogurt</td>
-          <td class="text-right">159</td>
-          <td class="text-right">6</td>
-          <td class="text-right">24</td>
-          <td class="text-right">4</td>
+          <td class="data">ภาพวาดปริศนา</td>
+          <td class="data">นักเขียนคนหนึ่ง</td>
+          <td class="data">นวนิยาย</td>
+          <td class="data">350</td>
+          <td class="data">5</td>
         </tr>
         <tr>
-          <td class="text-left">Ice cream sandwich</td>
-          <td class="text-right">237</td>
-          <td class="text-right">9</td>
-          <td class="text-right">37</td>
-          <td class="text-right">4.3</td>
-        </tr>
-        <tr>
-          <td class="text-left">Eclair</td>
-          <td class="text-right">262</td>
-          <td class="text-right">16</td>
-          <td class="text-right">23</td>
-          <td class="text-right">6</td>
-        </tr>
-        <tr>
-          <td class="text-left">Cupcake</td>
-          <td class="text-right">305</td>
-          <td class="text-right">3.7</td>
-          <td class="text-right">67</td>
-          <td class="text-right">4.3</td>
-        </tr>
-        <tr>
-          <td class="text-left">Gingerbread</td>
-          <td class="text-right">356</td>
-          <td class="text-right">16</td>
-          <td class="text-right">49</td>
-          <td class="text-right">3.9</td>
+          <td class="data">หงส์ในโคม</td>
+          <td class="data">นักเขียนคนหนึ่ง</td>
+          <td class="data">นวนิยาย</td>
+          <td class="data">370</td>
+          <td class="data">5</td>
         </tr>
       </tbody>
     </q-markup-table>
@@ -78,11 +51,24 @@
 </template>
 
 <script setup>
-const lorem = 'ทดสอบการแสดงผลค้าบ'
+const lorem = 'จำนวนหนังสือที่สะสม: 2 เล่ม'
 </script>
 
 <style lang="sass" scoped>
+// การ์ด
 .my-card
   width: 100%
   max-width: 250px
+
+// หัวตาราง
+.dataheader
+  text-align: center;
+  color: white;
+  font-weight: semi-bold;
+  font-size: large;
+
+// ข้อมูลตาราง
+.data
+  font-size: medium;
+  font-color: blue;
 </style>
