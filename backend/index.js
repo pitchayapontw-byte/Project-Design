@@ -42,12 +42,55 @@ app.post('/books', async (req, res) => {
   }
 })
 
-// app.post('/books', (req, res) => {
-//   console.log('HIT POST /books')
-//   console.log(req.body)
+// ลบหนังสือโดย ID
+app.delete('/books/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id)
 
-//   res.json({ ok: true })
-// })
+    const book = await prisma.book.delete({
+      where: { id },
+    })
+
+    res.json({ message: 'Deleted successfully', book })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// แก้ไขหนังสือโดย ID
+app.put('/books/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id)
+    const { title, author, type, genre, price, rating } = req.body
+
+    const book = await prisma.book.update({
+      where: { id },
+      data: {
+        title,
+        author,
+        type,
+        genre,
+        price: Number(price),
+        rating: Number(rating),
+      },
+    })
+
+    res.json(book)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// ดึงหนังสือโดย ID
+app.get('/books/:id', async (req, res) => {
+  const id = parseInt(req.params.id)
+
+  const book = await prisma.book.findUnique({
+    where: { id },
+  })
+
+  res.json(book)
+})
 
 app.listen(3000, () => {
   console.log('Server running on http://localhost:3000')
