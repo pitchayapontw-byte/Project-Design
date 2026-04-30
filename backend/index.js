@@ -13,7 +13,11 @@ app.get('/', (req, res) => {
 })
 // ดึงหนังสือทั้งหมด
 app.get('/books', async (req, res) => {
-  const books = await prisma.book.findMany()
+  const books = await prisma.book.findMany({
+    orderBy: {
+      order: 'asc',
+    },
+  })
   res.json(books)
 })
 
@@ -23,6 +27,7 @@ app.post('/books', async (req, res) => {
     console.log(req.body)
 
     const { title, author, type, genre, price, rating } = req.body
+    const count = await prisma.book.count()
 
     const book = await prisma.book.create({
       data: {
@@ -30,8 +35,9 @@ app.post('/books', async (req, res) => {
         author,
         type,
         genre,
-        price: parseInt(price),
-        rating: parseInt(rating),
+        price: Number(price),
+        rating: Number(rating),
+        order: count + 1,
       },
     })
 
@@ -47,11 +53,29 @@ app.delete('/books/:id', async (req, res) => {
   try {
     const id = parseInt(req.params.id)
 
-    const book = await prisma.book.delete({
+    // ลบหนังสือ
+    const deletedBook = await prisma.book.delete({
       where: { id },
     })
 
-    res.json({ message: 'Deleted successfully', book })
+    // ดึงใหม่เพื่อ reorder
+    const books = await prisma.book.findMany({
+      orderBy: { order: 'asc' },
+    })
+
+    // เรียง order ใหม่
+    for (let i = 0; i < books.length; i++) {
+      await prisma.book.update({
+        where: { id: books[i].id },
+        data: { order: i + 1 },
+      })
+    }
+
+    // ส่ง response กลับ
+    res.json({
+      message: 'Deleted successfully',
+      deletedBook,
+    })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
@@ -83,13 +107,21 @@ app.put('/books/:id', async (req, res) => {
 
 // ดึงหนังสือโดย ID
 app.get('/books/:id', async (req, res) => {
-  const id = parseInt(req.params.id)
+  try {
+    const id = parseInt(req.params.id)
 
-  const book = await prisma.book.findUnique({
-    where: { id },
-  })
+    const book = await prisma.book.findUnique({
+      where: { id },
+    })
 
-  res.json(book)
+    if (!book) {
+      return res.status(404).json({ message: 'Book not found' })
+    }
+
+    res.json(book)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
 })
 
 app.listen(3000, () => {

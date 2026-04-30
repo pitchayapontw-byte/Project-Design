@@ -22,6 +22,7 @@
         </tr>
         <!-- หัวตาราง -->
         <tr class="dataheader">
+          <th class="dataheader" style="font-size: large">ลำดับ</th>
           <th class="dataheader" style="font-size: large">ขื่อเรื่อง</th>
           <th class="dataheader" style="font-size: large">ผู้แต่ง</th>
           <th class="dataheader" style="font-size: large">ประเภท</th>
@@ -32,6 +33,7 @@
       <!-- ข้อมูลตาราง -->
       <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">
         <tr v-for="book in books" :key="book.id">
+          <td class="data">{{ book.order }}</td>
           <td class="data">{{ book.title }}</td>
           <td class="data">{{ book.author }}</td>
           <td class="data">{{ book.genre }}</td>
@@ -43,6 +45,7 @@
   </div>
   <q-dialog v-model="dialog">
     <q-card class="q-pa-md">
+      <q-input v-model="form.order" label="Order" type="number" />
       <q-input v-model="form.title" label="Title" />
       <q-input v-model="form.author" label="Author" />
       <q-input v-model="form.type" label="Type" />
