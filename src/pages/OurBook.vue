@@ -35,7 +35,7 @@
           <th class="dataheader" style="font-size: large">ประเภท</th>
           <th class="dataheader" style="font-size: large">แนว</th>
           <th class="dataheader" style="font-size: large">ราคา</th>
-          <th class="dataheader">คะแนน</th>
+          <th class="dataheader text-center" style="width: 180px">คะแนน</th>
         </tr>
       </thead>
       <!-- ข้อมูลตาราง -->
