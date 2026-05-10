@@ -35,7 +35,6 @@
           <th class="dataheader" style="font-size: large">ประเภท</th>
           <th class="dataheader" style="font-size: large">ราคา</th>
           <th class="dataheader">คะแนน</th>
-          <th class="dataheader">Actions</th>
         </tr>
       </thead>
       <!-- ข้อมูลตาราง -->
