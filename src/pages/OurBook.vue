@@ -6,11 +6,11 @@
       </q-card-section>
     </q-card>
   </div>
-  <div class="q-pa-md">
-    <q-markup-table flat bordered>
+  <div class="q-pa-md table-container">
+    <q-markup-table flat bordered class="book-table">
       <thead class="bg-teal">
         <tr>
-          <th colspan="7">
+          <th colspan="8">
             <div class="row no-wrap items-center">
               <div class="text-h4 text-white">รวมหนังสือที่สะสม</div>
 
@@ -33,6 +33,7 @@
           <th class="dataheader" style="font-size: large">ขื่อเรื่อง</th>
           <th class="dataheader" style="font-size: large">ผู้แต่ง</th>
           <th class="dataheader" style="font-size: large">ประเภท</th>
+          <th class="dataheader" style="font-size: large">แนว</th>
           <th class="dataheader" style="font-size: large">ราคา</th>
           <th class="dataheader">คะแนน</th>
         </tr>
@@ -41,24 +42,49 @@
       <tbody :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'">
         <tr v-for="book in books" :key="book.id" :class="{ selected: selected.includes(book.id) }">
           <td><input type="checkbox" v-model="selected" :value="book.id" /></td>
-          <td class="data">{{ book.order }}</td>
-          <td class="data">{{ book.title }}</td>
-          <td class="data">{{ book.author }}</td>
-          <td class="data">{{ book.genre }}</td>
-          <td class="data">{{ book.price }}</td>
-          <td class="data">{{ book.rating }}</td>
+          <td class="data text-center">{{ book.order }}</td>
+          <td class="data">
+            <q-input v-model="book.title" borderless dense @blur="updateBook(book)" />
+          </td>
+          <td class="data">
+            <q-input v-model="book.author" borderless dense @blur="updateBook(book)" />
+          </td>
+          <td class="data">
+            <q-input v-model="book.genre" borderless dense @blur="updateBook(book)" />
+          </td>
+          <td class="data">
+            <q-input v-model="book.type" borderless dense @blur="updateBook(book)" />
+          </td>
+          <td class="data">
+            <q-input
+              v-model.number="book.price"
+              type="number"
+              borderless
+              dense
+              input-class="text-center"
+              @blur="updateBook(book)"
+            />
+          </td>
+          <td class="data">
+            <q-rating
+              v-model="book.rating"
+              max="5"
+              size="1.5em"
+              @update:model-value="updateBook(book)"
+            />
+          </td>
         </tr>
       </tbody>
     </q-markup-table>
   </div>
   <q-dialog v-model="dialog">
     <q-card class="q-pa-md">
-      <q-input v-model="form.title" label="Title" />
-      <q-input v-model="form.author" label="Author" />
-      <q-input v-model="form.type" label="Type" />
-      <q-input v-model="form.genre" label="Genre" />
-      <q-input v-model="form.price" label="Price" type="number" />
-      <q-input v-model="form.rating" label="Rating" type="number" />
+      <q-input v-model="form.title" label="=ชื่อเรื่อง" />
+      <q-input v-model="form.author" label="ผู้แต่ง" />
+      <q-input v-model="form.type" label="แนว" />
+      <q-input v-model="form.genre" label="ประเภท" />
+      <q-input v-model="form.price" label="ราคา" type="number" />
+      <q-input v-model="form.rating" label="คะแนน" type="number" />
       <q-btn label="Save" color="green" @click="addBook" />
     </q-card>
   </q-dialog>
@@ -78,6 +104,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
+import {
+  getBooks,
+  addBookService,
+  deleteBookService,
+  updateBookService,
+} from 'src/service/bookService'
 
 const $q = useQuasar()
 const confirmDialog = ref(false)
@@ -95,17 +127,9 @@ const form = ref({
 const dialog = ref(false)
 
 const addBook = async () => {
-  await fetch('http://localhost:3000/books', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(form.value),
-  })
+  await addBookService(form.value)
 
-  // reload data
-  const res = await fetch('http://localhost:3000/books')
-  books.value = await res.json()
+  books.value = await getBooks()
 
   countallbook.value = `จำนวนหนังสือที่สะสม: ${books.value.length} เล่ม`
 }
@@ -115,7 +139,7 @@ const confirmDeleteSelected = () => {
 
   $q.dialog({
     title: 'Confirm Delete',
-    message: `คุณต้องการลบ ${selected.value.length} รายการใช่หรือไม่?`,
+    message: `ต้องการลบ ${selected.value.length} รายการใช่หรือไม่?`,
     cancel: true,
     persistent: true,
   }).onOk(async () => {
@@ -126,31 +150,24 @@ const confirmDeleteSelected = () => {
 
 // ดึงข้อมูลหนังสือเมื่อหน้าโหลด
 onMounted(async () => {
-  const res = await fetch('http://localhost:3000/books')
-  const data = await res.json()
+  const data = await getBooks()
 
   books.value = data
+
   countallbook.value = `จำนวนหนังสือที่สะสม: ${data.length} เล่ม`
 })
 
 // ลบหนังสือที่เลือก
 const deleteSelected = async () => {
-  console.log('deleting:', selected.value)
-
-  await Promise.all(
-    selected.value.map((id) =>
-      fetch(`http://localhost:3000/books/${id}`, {
-        method: 'DELETE',
-      }),
-    ),
-  )
-
-  console.log('deleted done')
+  await Promise.all(selected.value.map((id) => deleteBookService(id)))
 
   selected.value = []
 
-  const res = await fetch('http://localhost:3000/books')
-  books.value = await res.json()
+  books.value = await getBooks()
+}
+
+const updateBook = async (book) => {
+  await updateBookService(book)
 }
 </script>
 
@@ -170,8 +187,35 @@ const deleteSelected = async () => {
 // ข้อมูลตาราง
 .data
   font-size: medium;
-  font-color: blue;
+  color: black;
+
+.q-input
+  opacity: 0.8
+
+.q-input:hover
+  opacity: 1
 
 .selected
   background: #ffe0e0;
+
+.book-table
+  table-layout: fixed
+  width: 100%
+
+.data
+  overflow: hidden
+  text-overflow: ellipsis
+  white-space: nowrap
+  font-size: medium
+
+.dataheader
+  text-align: center
+  color: white
+  font-size: large
+
+.table-container
+  overflow-x: auto
+
+.book-table
+  min-width: 1000px
 </style>
